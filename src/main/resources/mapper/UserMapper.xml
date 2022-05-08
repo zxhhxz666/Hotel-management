@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.work.dao.UserMapper">
+    <select id="findUserByLoginName" resultType="com.work.bean.User">
+        select * from user where loginName = #{loginName}
+    </select>
+    <select id="getUserNumByDeptId" resultType="int">
+        select count(*) from user where deptId=#{deptId}
+    </select>
+    <select id="getUserNumByRoleId" resultType="int">
+        SELECT COUNT(*) FROM role_user ru INNER JOIN USER u ON ru.roleId=u.id WHERE ru.roleId = #{roleId}
+    </select>
+    <select id="findUserByPage" resultType="com.work.bean.User">
+        SELECT u.*, d.`deptName` FROM USER u INNER JOIN dept d ON u.`deptId`=d.`id`
+        <where>
+            <if test="loginName!=null and loginName!=''">
+                and u.loginName like concat('%', #{loginName}, '%')
+            </if>
+            <if test="name!=null and name!=''">
+                and u.name like concat('%', #{name}, '%')
+            </if>
+            <if test="sex!=null">
+                and u.sex=#{sex}
+            </if>
+            <if test="deptId!=null">
+                and u.deptId=#{deptId}
+            </if>
+            <if test="startDate!=null">
+                <![CDATA[ and u.hireDate >= #{startDate}]]>
+            </if>
+            <if test="endDate!=null">
+                <![CDATA[ and u.hireDate <= #{endDate}]]>
+            </if>
+        </where>
+        order by u.id
+    </select>
+    <insert id="addUser">
+        insert into user(loginName, name, loginPwd, sex, deptId, hireDate, salt, remark)
+        values(#{loginName},#{name},#{loginPwd},#{sex},#{deptId},#{hireDate},#{salt},#{remark})
+    </insert>
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="loginName!=null and loginName!=''">
+                loginName=#{loginName},
+            </if>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="loginPwd!=null and loginPwd!=''">
+                loginPwd=#{loginPwd},
+            </if>
+            <if test="salt!=null and salt!=''">
+                salt=#{salt},
+            </if>
+            <if test="sex!=null ">
+                sex=#{sex},
+            </if>
+            <if test="deptId!=null ">
+                deptId=#{deptId},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark=#{remark},
+            </if>
+            <if test="hireDate!=null ">
+                hireDate=#{hireDate},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <delete id="deleteById" >
+        delete from user where id=#{id}
+    </delete>
+    <select id="deleteRoleByUser" resultType="int">
+        delete from role_user where userId=#{userId}
+    </select>
+</mapper>

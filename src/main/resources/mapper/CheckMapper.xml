@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.work.dao.CheckMapper">
+
+    <resultMap id="BaseResultMap" type="com.work.bean.Check">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="roomTypeId" jdbcType="INTEGER" property="roomTypeId" />
+        <result column="roomId" jdbcType="BIGINT" property="roomId" />
+        <result column="customerName" jdbcType="VARCHAR" property="customerName" />
+        <result column="idCard" jdbcType="VARCHAR" property="idCard" />
+        <result column="phone" jdbcType="VARCHAR" property="phone" />
+        <result column="arriveDate" jdbcType="TIMESTAMP" property="arriveDate" />
+        <result column="leaveDate" jdbcType="TIMESTAMP" property="leaveDate" />
+        <result column="payPrice" jdbcType="DECIMAL" property="payPrice" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <resultMap id="checkInRoomAndTypeResultMap" type="com.work.bean.Check" extends="BaseResultMap">
+        <association property="room" javaType="com.work.bean.Room">
+            <id column="id" property="id"/>
+            <result property="roomNum" column="roomNum"/>
+        </association>
+
+        <association property="roomType" javaType="com.work.bean.RoomType">
+            <id property="id" column="id"/>
+            <result property="typeName" column="typeName"/>
+        </association>
+    </resultMap>
+
+    <select id="findCheckinList" resultMap="checkInRoomAndTypeResultMap">
+        select t1.*,t2.roomNum,t3.`typeName` from checkin t1
+        inner join room t2 on t2.id = t1.`roomId`
+        inner join room_type t3 on t3.id = t2.`roomTypeId`
+        <where>
+            <if test="customerName!=null and customerName!=''">
+                and t1.customerName like concat('%',#{customerName},'%')
+            </if>
+            <if test="idCard!=null and idCard!=''">
+                and t1.idCard like concat('%',#{idCard},'%')
+            </if>
+            <if test="phone!=null and phone!=''">
+                and t1.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="roomTypeId!=null">
+                and t1.roomTypeId = #{roomTypeId}
+            </if>
+            <if test="status!=null">
+                and t1.status = #{status}
+            </if>
+            <if test="arriveDate!=null">
+                <![CDATA[and t1.arriveDate >= #{arriveDate}]]>
+            </if>
+            <if test="leaveDate!=null">
+                <![CDATA[and t1.leaveDate <= #{leaveDate}]]>
+            </if>
+        </where>
+    </select>
+
+    <insert id="addCheckin">
+        insert into checkin (roomTypeId,roomId,customerName,idCard,phone,arriveDate,leaveDate,payPrice,status,remark,ordersId,createDate,createdBy)
+        values (#{roomTypeId},#{roomId},#{customerName},#{idCard},#{phone},#{arriveDate},#{leaveDate},#{payPrice},#{status},#{remark},#{ordersId},#{createDate},#{createdBy})
+    </insert>
+
+    <update id="updateCheckin">
+        update checkin
+        <set>
+            <if test="roomTypeId != null">
+                roomTypeId = #{roomTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="roomId != null">
+                roomId = #{roomId,jdbcType=BIGINT},
+            </if>
+            <if test="customerName != null">
+                customerName = #{customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="idCard != null">
+                idCard = #{idCard,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="arriveDate != null">
+                arriveDate = #{arriveDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="leaveDate != null">
+                leaveDate = #{leavedate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="payPrice != null">
+                payPrice = #{payPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

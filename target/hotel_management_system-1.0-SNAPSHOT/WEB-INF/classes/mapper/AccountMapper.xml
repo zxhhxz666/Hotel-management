@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.work.dao.AccountMapper">
+    <insert id="addAccount">
+        insert into account(loginName,password,realName,idCard,phone,email,status,createDate,salt)
+        values(#{loginName},#{password},#{realName},#{idCard},#{phone},#{email},#{status},#{createDate},#{salt})
+    </insert>
+
+    <select id="findAccountByName" resultType="com.work.bean.Account">
+        select * from account where loginName = #{loginName}
+    </select>
+</mapper>

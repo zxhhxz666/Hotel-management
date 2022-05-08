@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.work.dao.RoomMapper">
+
+    <select id="findRoomListByPage" resultType="com.work.bean.Room">
+        select t1.*,t2.`typeName` as typeName,t2.price as price from room t1
+        inner join room_type t2 on t2.`id` = t1.`roomTypeId`
+        <where>
+            <if test="roomNum!=null and roomNum!=''">
+                and t1.roomNum like concat('%',#{roomNum},'%')
+            </if>
+            <if test="roomTypeId!=null">
+                and t1.roomTypeId = #{roomTypeId}
+            </if>
+            <if test="status!=null">
+                and t1.status = #{status}
+            </if>
+        </where>
+        order by id
+    </select>
+
+    <insert id="addRoom">
+        insert into room (photo,roomNum,roomTypeId,status,roomDesc,remark)
+        values(#{photo},#{roomNum},#{roomTypeId},#{status},#{roomDesc},#{remark})
+    </insert>
+
+    <update id="updateRoom">
+        update room
+        <set>
+            <if test="photo!=null and photo!=''">
+                photo = #{photo},
+            </if>
+            <if test="roomNum!=null and roomNum!=''">
+                roomNum = #{roomNum},
+            </if>
+            <if test="roomTypeId!=null">
+                roomTypeId = #{roomTypeId},
+            </if>
+            <if test="status!=null">
+                status = #{status},
+            </if>
+            <if test="roomDesc!=null and roomDesc!=''">
+                roomDesc = #{roomDesc},
+            </if>
+            <if test="remark!=null and remark!=''">
+                remark = #{remark},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from room where id = #{id}
+    </delete>
+
+    <select id="findById" resultType="com.work.bean.Room">
+        select t1.*,t2.`typeName` as typeName,t2.`price` as price,t2.bedNum as bedNum from room t1
+        inner join room_type t2 on t2.id = t1.roomTypeId
+        where t1.id = #{id}
+    </select>
+
+</mapper>

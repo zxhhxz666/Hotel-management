@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+
+    <context:component-scan base-package="com.work.controller"/>
+
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <mvc:resources mapping="/statics/**" location="/statics/"/>
+
+
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/plain;charset=UTF-8</value>
+                        <value>application/xml;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                        <property name="dateFormat">
+                            <bean class="java.text.SimpleDateFormat">
+                                <constructor-arg type="java.lang.String" value="yyyy-MM-dd" />
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/admin/**/"/>
+            <mvc:exclude-mapping path="/admin/login.html"/>
+            <mvc:exclude-mapping path="/admin/user/login"/>
+            <bean class="com.work.filter.LoginFilter"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="10485760"/>
+    </bean>
+
+
+</beans>
