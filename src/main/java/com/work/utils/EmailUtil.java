@@ -25,19 +25,20 @@ public class EmailUtil {
         Session session = Session.getDefaultInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("1343585316@qq.com","fhoorccgcppkigcf");
+                return new PasswordAuthentication("1287394511@qq.com","fhoorccgcppkigcf");
             }
         });
 
+        //Set debug information
         session.setDebug(true);
 
         Transport transport = session.getTransport();
 
-        transport.connect("smtp.qq.com","1343585316@qq.com","fhoorccgcppkigcf");
+        transport.connect("smtp.qq.com","1287394511@qq.com","fhoorccgcppkigcf");
 
         MimeMessage mimeMessage = new MimeMessage(session);
 
-        mimeMessage.setFrom(new InternetAddress("1343585316@qq.com"));
+        mimeMessage.setFrom(new InternetAddress("1287394511@qq.com"));
 
         mimeMessage.setRecipient(Message.RecipientType.TO,new InternetAddress(send));
 
